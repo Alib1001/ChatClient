@@ -1,6 +1,8 @@
 package com.example.chatclient;
 
 import android.app.Activity;
+import android.content.Context;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,8 +42,13 @@ public class ChatClient {
     }
 
     public void sendMessage(String message) {
-        writer.println(message);
-        writer.flush();
+        try {
+            writer.println(message);
+            writer.flush();
+        }
+        catch (NullPointerException e){
+            e.printStackTrace();
+        }
     }
 
     public class IncomingReader implements Runnable {
@@ -53,7 +60,7 @@ public class ChatClient {
         private final BufferedReader bufferedReader;
         private final List<Message> messages;
         private final RecyclerView.Adapter adapter;
-        private Activity activity;
+        private final Activity activity;
 
         public IncomingReader(BufferedReader bufferedReader, List<Message> messages,
                               RecyclerView.Adapter adapter,Activity activity) {
