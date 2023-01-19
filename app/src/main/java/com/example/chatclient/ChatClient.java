@@ -12,11 +12,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class ChatClient {
-    private Socket socket;
+    Socket socket;
     private BufferedReader bufferedReader;
-    private PrintWriter writer;
+    PrintWriter writer;
     private final String ip;
     private final int port;
     private final List<Message> messages;
@@ -33,7 +34,7 @@ public class ChatClient {
             writer = new PrintWriter(socket.getOutputStream());
             System.out.println("Connected");
 
-            Thread readerThread = new Thread(new IncomingReader(bufferedReader,messages,adapter,activity));
+            Thread readerThread = new Thread(new IncomingReader(bufferedReader,messages,adapter,activity, new CountDownLatch(1)));
             readerThread.start();
 
         } catch (IOException e) {
@@ -51,25 +52,37 @@ public class ChatClient {
         }
     }
 
+    public void connect(RecyclerView.Adapter adapter,Activity activity, CountDownLatch latch) {
+        try {
+            socket = new Socket(ip, port);
+            InputStreamReader streamReader = new InputStreamReader(socket.getInputStream());
+            bufferedReader = new BufferedReader(streamReader);
+            writer = new PrintWriter(socket.getOutputStream());
+            System.out.println("Connected");
+
+            Thread readerThread = new Thread(new IncomingReader(bufferedReader,messages,adapter,activity, latch));
+            readerThread.start();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public class IncomingReader implements Runnable {
-
-        /** Эта балаха написана чтобы передавать сообщения в массив messages и обновлять adapter
-         когда приходит новое сообщение
-         см. метод run()**/
-
         private final BufferedReader bufferedReader;
         private final List<Message> messages;
         private final RecyclerView.Adapter adapter;
         private final Activity activity;
+        private final CountDownLatch latch;
 
         public IncomingReader(BufferedReader bufferedReader, List<Message> messages,
-                              RecyclerView.Adapter adapter,Activity activity) {
+                              RecyclerView.Adapter adapter, Activity activity, CountDownLatch latch) {
             this.bufferedReader = bufferedReader;
             this.messages = messages;
             this.adapter = adapter;
             this.activity = activity;
+            this.latch = latch;
         }
-
 
         @Override
         public void run() {
@@ -80,14 +93,15 @@ public class ChatClient {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            messages.add(new Message(finalMsg,"Улиточка"));
+                            messages.add(new Message(finalMsg, "Улиточка"));
                             adapter.notifyDataSetChanged();
-
                         }
                     });
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                latch.countDown();
             }
         }
     }
