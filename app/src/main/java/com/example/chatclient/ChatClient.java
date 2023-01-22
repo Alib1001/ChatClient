@@ -21,6 +21,7 @@ public class ChatClient {
     private final String ip;
     private final int port;
     private final List<Message> messages;
+    Message message = new Message();
     public ChatClient(String ip, int port, List<Message> messages) {
         this.ip = ip;
         this.port = port;
@@ -93,7 +94,7 @@ public class ChatClient {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            messages.add(new Message(finalMsg, "Улиточка"));
+                            messages.add(new Message(finalMsg, NameActivity.message.getName()));
                             adapter.notifyDataSetChanged();
                         }
                     });

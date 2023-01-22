@@ -36,7 +36,6 @@ public class ChatServer {
         public void run() {
             try {
                 String msg = "";
-                String name = "Anon";
                 while ((msg = reader.readLine())!= null){
                     System.out.println("read:" + msg);
                     tellEveryOne(msg);
