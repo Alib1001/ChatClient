@@ -3,6 +3,7 @@ package com.example.chatclient;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,8 +32,26 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView msgView = holder.itemView.findViewById(R.id.msgTv);
         TextView nameView = holder.itemView.findViewById(R.id.nameTv);
 
-        msgView.setText(String.format(this.messages.get(position).getMessage()));
-        nameView.setText("Улиточка");
+        String regex = "/";
+
+        String connectedStr = NameActivity.message.getName() + regex + this.messages.get(position).getMessage();
+        String[] words = connectedStr.split(regex);
+
+        try {
+            msgView.setText(words[1]);
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            msgView.setText("");
+            e.printStackTrace();
+        }
+
+        try {
+            nameView.setText(words[0]);
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            nameView.setText("Улиточка");
+            e.printStackTrace();
+        }
 
     }
 
