@@ -2,7 +2,7 @@ package com.example.chatclient;
 
 public class Message {
     private String message;
-    private String name;
+    private String name = "Улиточка";
 
     public Message(){
 

@@ -1,8 +1,6 @@
 package com.example.chatclient;
 
 import android.app.Activity;
-import android.content.Context;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
