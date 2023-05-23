@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         sendBtn = findViewById(R.id.btnSend);
         inputMsg = findViewById(R.id.textInput);
 
-        chatClient = new ChatClient("192.168.0.107", 4000,messages);
+        chatClient = new ChatClient("10.0.2.2", 4000,messages);
         chatClient.connect(adapter,this);
 
         RecyclerView recycler = findViewById(R.id.recycler);
